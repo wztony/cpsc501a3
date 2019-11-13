@@ -1,12 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <serialized>
-  <object class="FruitContainer" id="0">
-    <field name="fruits" declaringclass="FruitContainer">
-      <object class="[LFruit;" id="1" length="3">
-        <reference>2</reference>
-        <reference>3</reference>
-        <reference>4</reference>
-      </object>
+  <object class="LinkedObject" id="1">
+    <field name="value" declaringclass="LinkedObject">
+      <value>34</value>
+    </field>
+    <field name="linkedObject" declaringclass="LinkedObject">
+      <reference>0</reference>
+    </field>
+  </object>
+  <object class="LinkedObject" id="0">
+    <field name="value" declaringclass="LinkedObject">
+      <value>12</value>
+    </field>
+    <field name="linkedObject" declaringclass="LinkedObject">
+      <reference>1</reference>
     </field>
   </object>
 </serialized>

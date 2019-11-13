@@ -3,6 +3,7 @@ import java.io.IOException;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.IdentityHashMap;
 import java.util.Scanner;
 
@@ -18,11 +19,10 @@ public class Serializer {
 	
 	
 	private IdentityHashMap<Object, Integer> ihm;
-	
+	private Element rootElement;
 	
 	public Serializer() {
 		ihm = new IdentityHashMap<Object, Integer>();
-		
 	}
 	
 	
@@ -39,7 +39,22 @@ public class Serializer {
 	}
 	
 	public int ihmGetInteger(Object object) {
+		if(!ihm.containsKey(object)) {
+			ihmPut(object);
+		}
 		return ihm.get(object);
+	}
+	
+	public Element getRootElement() {
+		return rootElement;
+	}
+
+	public void setRootElement(Element rootElement) {
+		this.rootElement = rootElement;
+	}
+	
+	public void rootAddContent(Element elem) {
+		rootElement.addContent(elem);
 	}
 	
 	public Object createFruit(double weight, boolean seed) {
@@ -50,6 +65,27 @@ public class Serializer {
 			try {
 				try {
 					object = objectClass.getConstructor(double.class, boolean.class).newInstance(weight, seed);
+				} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
+						| InvocationTargetException e) {
+					e.printStackTrace();
+				}
+			} catch (NoSuchMethodException | SecurityException e) {
+				e.printStackTrace();
+			}					
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+		return object;
+	}
+	
+	public Object createLinkedObject(int value) {
+		Object object = null;
+		try {
+			String className = "LinkedObject";
+			Class objectClass = Class.forName(className);
+			try {
+				try {
+					object = objectClass.getConstructor(int.class).newInstance(value);
 				} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
 						| InvocationTargetException e) {
 					e.printStackTrace();
@@ -111,19 +147,15 @@ public class Serializer {
 		return object;
 	}
 	
-	public org.jdom2.Document serialize(Object obj){
-		Element rootElement = new Element("serialized");
-		Document doc = new Document(rootElement);
-		
+	
+	public Element recSerialize(Object obj) {
 		Class objectClass = obj.getClass();
 		String className = objectClass.getName();
-		ihmPut(obj);
-		int id = ihmGetInteger(obj);
+		int	id = ihmGetInteger(obj);
 		
 		Element elementObject = new Element("object");
 		elementObject.setAttribute(new Attribute("class", className));
 		elementObject.setAttribute(new Attribute("id", String.valueOf(id)));
-		
 		
 		Field[] fields = objectClass.getDeclaredFields();
 		for(Field field : fields) {
@@ -168,17 +200,43 @@ public class Serializer {
 							System.out.println("element " + i + " is an object");
 							ihmPut(value);
 							elementArray.addContent(new Element("reference").setText(String.valueOf(ihmGetInteger(value))));
+							rootAddContent(recSerialize(value));
 						}
 					}
-					elementField.addContent(elementArray);
+					rootElement.addContent(elementArray);
+					elementField.addContent(new Element("reference").setText(String.valueOf(arrayID)));
+					elementObject.addContent(elementField);
+				}
+				else {
+					System.out.println(field.getName() + " is an object");
+					if(!ihm.containsKey(ob)) {
+						rootAddContent(recSerialize(ob));
+					}
+
+					Element elementField = new Element("field");
+					elementField.setAttribute(new Attribute("name", field.getName()));
+					elementField.setAttribute(new Attribute("declaringclass", className));
+					
+					int refID = ihmGetInteger(ob);
+					Element refElem = new Element("reference");
+					refElem.setText(String.valueOf(refID));
+					elementField.addContent(refElem);
 					elementObject.addContent(elementField);
 				}
 			} catch (IllegalArgumentException | IllegalAccessException e) {
 				e.printStackTrace();
 			}
 		}
+		return elementObject;
+	}
+	
+	public org.jdom2.Document serialize(Object obj){
+		rootElement = new Element("serialized");
+		Document doc = new Document(rootElement);
+		
+		
 
-		doc.getRootElement().addContent(elementObject);
+		doc.getRootElement().addContent(recSerialize(obj));
 		
 		try {
 			XMLOutputter xmlOutput = new XMLOutputter();
@@ -217,6 +275,29 @@ public class Serializer {
 				serializer.serialize(fruit);
 				break;
 			case "2":
+				System.out.println("Enter its value (int)");
+				s = scanner.nextLine();
+				int value1 = Integer.parseInt(s);
+				Object linkedObject1 = serializer.createLinkedObject(value1);
+				System.out.println("Enter its value (int)");
+				s = scanner.nextLine();
+				int value2 = Integer.parseInt(s);
+				Object linkedObject2 = serializer.createLinkedObject(value2);
+				System.out.println("Class name: " + linkedObject1.getClass().getName());
+				System.out.println("Class name: " + linkedObject2.getClass().getName());
+				try {
+					Method setLinkedObject = Class.forName("LinkedObject").getDeclaredMethod("setLinkedObject", LinkedObject.class);
+					setLinkedObject.setAccessible(true);
+					try {
+						setLinkedObject.invoke(linkedObject1, linkedObject2);
+						setLinkedObject.invoke(linkedObject2, linkedObject1);
+					} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+						e.printStackTrace();
+					}
+				} catch (NoSuchMethodException | SecurityException | ClassNotFoundException e) {
+					e.printStackTrace();
+				}
+				serializer.serialize(linkedObject1);
 				break;
 			case "3":
 				System.out.println("Enter the length of the int array");
@@ -262,4 +343,6 @@ public class Serializer {
 
 		System.out.println("Exiting program.");
 	}
+
+
 }

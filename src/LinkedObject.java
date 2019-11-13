@@ -1,7 +1,11 @@
 
 public class LinkedObject {
-	private int id;
+	private int value;
 	private LinkedObject linkedObject;
+	
+	public LinkedObject(int value) {
+		setValue(value);
+	}
 	
 	public LinkedObject getLinkedObject() {
 		return linkedObject;
@@ -10,10 +14,11 @@ public class LinkedObject {
 		this.linkedObject = linkedObject;
 	}
 	
-	public int getId() {
-		return id;
+	public int getValue() {
+		return value;
 	}
-	public void setId(int id) {
-		this.id = id;
+	
+	public void setValue(int value) {
+		this.value = value;
 	}
 }
