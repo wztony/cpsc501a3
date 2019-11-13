@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <serialized>
-  <object class="BasicContainer" id="0">
-    <field name="array" declaringclass="BasicContainer">
-      <object class="[I" id="1" length="3">
-        <value>1</value>
-        <value>1</value>
-        <value>2</value>
+  <object class="FruitContainer" id="0">
+    <field name="fruits" declaringclass="FruitContainer">
+      <object class="[LFruit;" id="1" length="3">
+        <reference>2</reference>
+        <reference>3</reference>
+        <reference>4</reference>
       </object>
     </field>
   </object>

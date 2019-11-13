@@ -1,10 +1,8 @@
-import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.IdentityHashMap;
 import java.util.Scanner;
 
@@ -48,10 +46,10 @@ public class Serializer {
 		Object object = null;
 		try {
 			String className = "Fruit";
-			Class fruitClass = Class.forName(className);
+			Class objectClass = Class.forName(className);
 			try {
 				try {
-					object = fruitClass.getConstructor(double.class, boolean.class).newInstance(weight, seed);
+					object = objectClass.getConstructor(double.class, boolean.class).newInstance(weight, seed);
 				} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
 						| InvocationTargetException e) {
 					e.printStackTrace();
@@ -69,10 +67,37 @@ public class Serializer {
 		Object object = null;
 		try {
 			String className = "BasicContainer";
-			Class fruitClass = Class.forName(className);
+			Class objectClass = Class.forName(className);
 			try {
 				try {
-					object = fruitClass.getConstructor(int[].class).newInstance(array);
+					System.out.println("asdfasdf" + Fruit[].class);
+					System.out.println("asdfasdf" + int[].class);
+					object = objectClass.getConstructor(array.getClass()).newInstance(array);
+				} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
+						| InvocationTargetException e) {
+					e.printStackTrace();
+				}
+			} catch (NoSuchMethodException | SecurityException e) {
+				e.printStackTrace();
+			}					
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+		return object;
+	}
+	
+	public Object createFruitContainer(Fruit[] array) {
+		Object object = null;
+		try {
+			String className = "FruitContainer";
+			Class objectClass = Class.forName(className);
+			try {
+				try {
+					System.out.println("asdfasdf" + Fruit[].class);
+					System.out.println("asdfasdf" + int[].class);
+					String[] a = {"ac", "sdf"};
+					int[] b = {1,2};
+					object = objectClass.getConstructor(Fruit[].class).newInstance((Object) array);			//https://stackoverflow.com/questions/26005924/instantiate-object-with-array-elements-as-parameters-java
 				} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
 						| InvocationTargetException e) {
 					e.printStackTrace();
@@ -118,7 +143,6 @@ public class Serializer {
 				}
 				else if(ob.getClass().isArray()) {
 					System.out.println(field.getName() + " is an array");
-					
 					Element elementField = new Element("field");
 					elementField.setAttribute(new Attribute("name", field.getName()));
 					elementField.setAttribute(new Attribute("declaringclass", className));
@@ -130,8 +154,6 @@ public class Serializer {
 					elementArray.setAttribute("id", String.valueOf(arrayID));
 					elementArray.setAttribute("length", String.valueOf(Array.getLength(ob)));
 					
-					
-					
 					for(int i=0; i<Array.getLength(ob); i++) {
 						Object value = Array.get(ob, i);
 						if(value.getClass().isPrimitive() ||
@@ -141,6 +163,11 @@ public class Serializer {
 								value.getClass() == java.lang.Boolean.class) {
 							System.out.println("element " + i + " is primitive");
 							elementArray.addContent(new Element("value").setText(String.valueOf(value)));
+						}
+						else {
+							System.out.println("element " + i + " is an object");
+							ihmPut(value);
+							elementArray.addContent(new Element("reference").setText(String.valueOf(ihmGetInteger(value))));
 						}
 					}
 					elementField.addContent(elementArray);
@@ -162,34 +189,6 @@ public class Serializer {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
-		/*
-		Element object = new Element("object");
-		serializer.ihmPut(obj);
-		object.setAttribute(new Attribute("class", className));
-		object.setAttribute(new Attribute("id", String.valueOf(serializer.ihmGetInteger(obj))));
-		
-		Element field1 = new Element("field");
-		field1.setAttribute(new Attribute("name", "weight"));
-		field1.setAttribute(new Attribute("declaringclass", className));
-		field1.addContent(new Element("value").setText(""));
-		
-		
-		object.addContent(field1);
-		
-		doc.getRootElement().addContent(object);
-		
-		try {
-			XMLOutputter xmlOutput = new XMLOutputter();
-			
-			xmlOutput.setFormat(Format.getPrettyFormat());
-			xmlOutput.output(doc, new FileWriter("Fruit.xml"));
-			xmlOutput.output(doc, System.out);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		
-		*/
 		return doc;
 	}
 	
@@ -222,19 +221,35 @@ public class Serializer {
 			case "3":
 				System.out.println("Enter the length of the int array");
 				s = scanner.nextLine();
-				int length = Integer.parseInt(s);
-				int[] array = new int[length];
-				for(int i=0; i<length; i++) {
+				int length1 = Integer.parseInt(s);
+				int[] array1 = new int[length1];
+				for(int i=0; i<length1; i++) {
 					System.out.println("Enter value (int) for index " + i);
 					s = scanner.nextLine();
 					int value = Integer.parseInt(s);
-					array[i] = value;
+					array1[i] = value;
 				}
-				Object basicContainer = serializer.createBasicContainer(array);
+				Object basicContainer = serializer.createBasicContainer(array1);
 				System.out.println("Class name: " + basicContainer.getClass().getName());
 				serializer.serialize(basicContainer);
 				break;
 			case "4":
+				System.out.println("Enter the length of the object array");
+				s = scanner.nextLine();
+				int length2 = Integer.parseInt(s);
+				Fruit[] array2 = new Fruit[length2];
+				for(int i=0; i<length2; i++) {
+					System.out.println("Enter its weight (double)");
+					s = scanner.nextLine();
+					double weight2 = Double.parseDouble(s);
+					System.out.println("Enter if it has seeds (boolean)");
+					s = scanner.nextLine();
+					boolean seed2 = Boolean.parseBoolean(s);
+					array2[i] = (Fruit) serializer.createFruit(weight2, seed2);
+				}
+				Object fruitContainer = serializer.createFruitContainer(array2);
+				System.out.println("Class name: " + fruitContainer.getClass().getName());
+				serializer.serialize(fruitContainer);
 				break;
 			case "5":
 				break;
