@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<serialized>
+  <object class="Fruit" id="0">
+    <field name="weight" declaringclass="class Fruit">
+      <value>231.4123</value>
+    </field>
+  </object>
+</serialized>
