@@ -6,6 +6,10 @@ public class FruitContainer {
 		setFruits(fruits);
 	}
 	
+	public FruitContainer() {
+		
+	}
+	
 	public Fruit[] getFruits() {
 		return fruits;
 	}

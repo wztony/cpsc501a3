@@ -8,6 +8,10 @@ public class Fruit {
 		setSeed(seed);
 	}
 	
+	public Fruit() {
+		
+	}
+	
 	public double getWeight() {
 		return weight;
 	}

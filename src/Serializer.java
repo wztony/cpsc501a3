@@ -17,11 +17,12 @@ import org.jdom2.output.XMLOutputter;
 
 public class Serializer {
 	
-	
+	private String fileName;
 	private IdentityHashMap<Object, Integer> ihm;
 	private Element rootElement;
 	
-	public Serializer() {
+	public Serializer(String fileName) {
+		this.fileName = fileName;
 		ihm = new IdentityHashMap<Object, Integer>();
 	}
 	
@@ -106,8 +107,6 @@ public class Serializer {
 			Class objectClass = Class.forName(className);
 			try {
 				try {
-					System.out.println("asdfasdf" + Fruit[].class);
-					System.out.println("asdfasdf" + int[].class);
 					object = objectClass.getConstructor(array.getClass()).newInstance(array);
 				} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
 						| InvocationTargetException e) {
@@ -129,10 +128,6 @@ public class Serializer {
 			Class objectClass = Class.forName(className);
 			try {
 				try {
-					System.out.println("asdfasdf" + Fruit[].class);
-					System.out.println("asdfasdf" + int[].class);
-					String[] a = {"ac", "sdf"};
-					int[] b = {1,2};
 					object = objectClass.getConstructor(Fruit[].class).newInstance((Object) array);			//https://stackoverflow.com/questions/26005924/instantiate-object-with-array-elements-as-parameters-java
 				} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
 						| InvocationTargetException e) {
@@ -242,7 +237,7 @@ public class Serializer {
 			XMLOutputter xmlOutput = new XMLOutputter();
 			
 			xmlOutput.setFormat(Format.getPrettyFormat());
-			xmlOutput.output(doc, new FileWriter("Fruit.xml"));
+			xmlOutput.output(doc, new FileWriter(fileName));
 			xmlOutput.output(doc, System.out);
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -251,7 +246,7 @@ public class Serializer {
 	}
 	
 	public static void main(String[] args) {
-		Serializer serializer = new Serializer();
+		Serializer serializer = new Serializer("LinkedObject.xml");
 		Scanner scanner = new Scanner(System.in);
 		System.out.println("Enter your selection:");
 		System.out.println("1 for simple object with primitive fields");

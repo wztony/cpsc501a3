@@ -6,6 +6,10 @@ public class BasicContainer {
 		setArray(array);
 	}
 	
+	public BasicContainer() {
+		
+	}
+	
 	public int[] getArray() {
 		return array;
 	}

@@ -7,6 +7,10 @@ public class LinkedObject {
 		setValue(value);
 	}
 	
+	public LinkedObject() {
+		
+	}
+	
 	public LinkedObject getLinkedObject() {
 		return linkedObject;
 	}

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<serialized>
+  <object class="Fruit" id="2">
+    <field name="weight" declaringclass="Fruit">
+      <value>12.0</value>
+    </field>
+    <field name="seed" declaringclass="Fruit">
+      <value>true</value>
+    </field>
+  </object>
+  <object class="Fruit" id="3">
+    <field name="weight" declaringclass="Fruit">
+      <value>23.0</value>
+    </field>
+    <field name="seed" declaringclass="Fruit">
+      <value>false</value>
+    </field>
+  </object>
+  <object class="Fruit" id="4">
+    <field name="weight" declaringclass="Fruit">
+      <value>324.5</value>
+    </field>
+    <field name="seed" declaringclass="Fruit">
+      <value>true</value>
+    </field>
+  </object>
+  <object class="[LFruit;" id="1" length="3">
+    <reference>2</reference>
+    <reference>3</reference>
+    <reference>4</reference>
+  </object>
+  <object class="FruitContainer" id="0">
+    <field name="fruits" declaringclass="FruitContainer">
+      <reference>1</reference>
+    </field>
+  </object>
+</serialized>
