@@ -7,6 +7,10 @@ public class FruitCollection {
 		this.arrayList = arrayList;
 	}
 	
+	public FruitCollection() {
+		
+	}
+	
 	public ArrayList<Fruit> getArrayList() {
 		return arrayList;
 	}

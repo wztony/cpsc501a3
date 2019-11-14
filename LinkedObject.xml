@@ -1,13 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <serialized>
-  <object class="[I" id="1" length="4">
-    <value>1</value>
-    <value>1</value>
-    <value>2</value>
-    <value>3</value>
+  <object class="LinkedObject" id="1">
+    <field name="value" declaringclass="LinkedObject">
+      <value>34</value>
+    </field>
+    <field name="linkedObject" declaringclass="LinkedObject">
+      <reference>0</reference>
+    </field>
   </object>
-  <object class="BasicContainer" id="0">
-    <field name="array" declaringclass="BasicContainer">
+  <object class="LinkedObject" id="0">
+    <field name="value" declaringclass="LinkedObject">
+      <value>12</value>
+    </field>
+    <field name="linkedObject" declaringclass="LinkedObject">
       <reference>1</reference>
     </field>
   </object>

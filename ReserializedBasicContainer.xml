@@ -2,9 +2,9 @@
 <serialized>
   <object class="[I" id="1" length="4">
     <value>1</value>
-    <value>1</value>
-    <value>2</value>
-    <value>3</value>
+    <value>0</value>
+    <value>-1</value>
+    <value>12345</value>
   </object>
   <object class="BasicContainer" id="0">
     <field name="array" declaringclass="BasicContainer">

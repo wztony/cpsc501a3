@@ -4,6 +4,7 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.IdentityHashMap;
 import java.util.Scanner;
 
@@ -26,6 +27,9 @@ public class Serializer {
 		ihm = new IdentityHashMap<Object, Integer>();
 	}
 	
+	public void setFileName(String fileName) {
+		this.fileName = fileName;
+	}
 	
 	public void setIHM(IdentityHashMap<Object, Integer> ihm) {
 		this.ihm = ihm;
@@ -142,6 +146,27 @@ public class Serializer {
 		return object;
 	}
 	
+	public Object createFruitCollection(ArrayList<Fruit> arrayList) {
+		Object object = null;
+		try {
+			String className = "FruitCollection";
+			Class objectClass = Class.forName(className);
+			try {
+				try {
+					object = objectClass.getConstructor(ArrayList.class).newInstance(arrayList);
+					} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
+						| InvocationTargetException e) {
+					e.printStackTrace();
+				}
+			} catch (NoSuchMethodException | SecurityException e) {
+				e.printStackTrace();
+			}					
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+		return object;
+	}
+	
 	
 	public Element recSerialize(Object obj) {
 		Class objectClass = obj.getClass();
@@ -157,11 +182,11 @@ public class Serializer {
 			field.setAccessible(true);
 			try {
 				Object ob = field.get(obj);
-				System.out.println("field name: " + field.getName());
-				System.out.println("field class: " + ob.getClass());
-				System.out.println("field type: " + field.getType());
+//				System.out.println("field name: " + field.getName());
+//				System.out.println("field class: " + ob.getClass());
+//				System.out.println("field type: " + field.getType());
 				if(field.getType().isPrimitive()) {
-					System.out.println(field.getName() + " is primitive");
+//					System.out.println(field.getName() + " is primitive");
 					Element elementField = new Element("field");
 					elementField.setAttribute(new Attribute("name", field.getName()));
 					elementField.setAttribute(new Attribute("declaringclass", className));
@@ -169,7 +194,7 @@ public class Serializer {
 					elementObject.addContent(elementField);
 				}
 				else if(ob.getClass().isArray()) {
-					System.out.println(field.getName() + " is an array");
+//					System.out.println(field.getName() + " is an array");
 					Element elementField = new Element("field");
 					elementField.setAttribute(new Attribute("name", field.getName()));
 					elementField.setAttribute(new Attribute("declaringclass", className));
@@ -188,11 +213,11 @@ public class Serializer {
 								value.getClass() == java.lang.Long.class||
 								value.getClass() == java.lang.Integer.class||
 								value.getClass() == java.lang.Boolean.class) {
-							System.out.println("element " + i + " is primitive");
+//							System.out.println("element " + i + " is primitive");
 							elementArray.addContent(new Element("value").setText(String.valueOf(value)));
 						}
 						else {
-							System.out.println("element " + i + " is an object");
+//							System.out.println("element " + i + " is an object");
 							ihmPut(value);
 							elementArray.addContent(new Element("reference").setText(String.valueOf(ihmGetInteger(value))));
 							rootAddContent(recSerialize(value));
@@ -203,7 +228,7 @@ public class Serializer {
 					elementObject.addContent(elementField);
 				}
 				else {
-					System.out.println(field.getName() + " is an object");
+//					System.out.println(field.getName() + " is an object");
 					if(!ihm.containsKey(ob)) {
 						rootAddContent(recSerialize(ob));
 					}
@@ -229,10 +254,7 @@ public class Serializer {
 		rootElement = new Element("serialized");
 		Document doc = new Document(rootElement);
 		
-		
-
 		doc.getRootElement().addContent(recSerialize(obj));
-		
 		try {
 			XMLOutputter xmlOutput = new XMLOutputter();
 			
@@ -245,9 +267,7 @@ public class Serializer {
 		return doc;
 	}
 	
-	public static void main(String[] args) {
-		Serializer serializer = new Serializer("LinkedObject.xml");
-		Scanner scanner = new Scanner(System.in);
+	public void displaySelections() {
 		System.out.println("Enter your selection:");
 		System.out.println("1 for simple object with primitive fields");
 		System.out.println("2 for objects with references to each other");
@@ -255,6 +275,12 @@ public class Serializer {
 		System.out.println("4 for object with an array of simple objects");
 		System.out.println("5 for object with collection");
 		System.out.println("q to exit");
+	}
+	
+	public static void main(String[] args) {
+		Serializer serializer = new Serializer("Fruit.xml");
+		Scanner scanner = new Scanner(System.in);
+		serializer.displaySelections();
 		String s = scanner.nextLine();
 		while(!s.equals("q")) {
 			switch(s) {
@@ -266,7 +292,8 @@ public class Serializer {
 				s = scanner.nextLine();
 				boolean seed = Boolean.parseBoolean(s);
 				Object fruit = serializer.createFruit(weight, seed);
-				System.out.println("Class name: " + fruit.getClass().getName());
+//				System.out.println("Class name: " + fruit.getClass().getName());
+				serializer.setFileName("Fruit.xml");
 				serializer.serialize(fruit);
 				break;
 			case "2":
@@ -278,8 +305,8 @@ public class Serializer {
 				s = scanner.nextLine();
 				int value2 = Integer.parseInt(s);
 				Object linkedObject2 = serializer.createLinkedObject(value2);
-				System.out.println("Class name: " + linkedObject1.getClass().getName());
-				System.out.println("Class name: " + linkedObject2.getClass().getName());
+//				System.out.println("Class name: " + linkedObject1.getClass().getName());
+//				System.out.println("Class name: " + linkedObject2.getClass().getName());
 				try {
 					Method setLinkedObject = Class.forName("LinkedObject").getDeclaredMethod("setLinkedObject", LinkedObject.class);
 					setLinkedObject.setAccessible(true);
@@ -292,6 +319,7 @@ public class Serializer {
 				} catch (NoSuchMethodException | SecurityException | ClassNotFoundException e) {
 					e.printStackTrace();
 				}
+				serializer.setFileName("LinkedObject.xml");
 				serializer.serialize(linkedObject1);
 				break;
 			case "3":
@@ -306,7 +334,8 @@ public class Serializer {
 					array1[i] = value;
 				}
 				Object basicContainer = serializer.createBasicContainer(array1);
-				System.out.println("Class name: " + basicContainer.getClass().getName());
+//				System.out.println("Class name: " + basicContainer.getClass().getName());
+				serializer.setFileName("BasicContainer.xml");
 				serializer.serialize(basicContainer);
 				break;
 			case "4":
@@ -324,20 +353,36 @@ public class Serializer {
 					array2[i] = (Fruit) serializer.createFruit(weight2, seed2);
 				}
 				Object fruitContainer = serializer.createFruitContainer(array2);
-				System.out.println("Class name: " + fruitContainer.getClass().getName());
+//				System.out.println("Class name: " + fruitContainer.getClass().getName());
+				serializer.setFileName("FruitContainer.xml");
 				serializer.serialize(fruitContainer);
 				break;
 			case "5":
+				System.out.println("Enter the length of the array list");
+				s = scanner.nextLine();
+				int length3 = Integer.parseInt(s);
+				ArrayList<Fruit> array3= new ArrayList<Fruit>(length3);
+				for(int i=0; i<length3; i++) {
+					System.out.println("Enter its weight (double)");
+					s = scanner.nextLine();
+					double weight3 = Double.parseDouble(s);
+					System.out.println("Enter if it has seeds (boolean)");
+					s = scanner.nextLine();
+					boolean seed3 = Boolean.parseBoolean(s);
+					array3.add((Fruit) serializer.createFruit(weight3, seed3));
+				}
+				Object arrayList = serializer.createFruitCollection(array3);
+//				System.out.println("Class name: " + arrayList.getClass().getName());
+				serializer.setFileName("FruitCollection.xml");
+				serializer.serialize(arrayList);
 				break;
 			default:
 				System.out.println("Invalid selection, try again");
 				break;
 			}
+			serializer.displaySelections();
 			s = scanner.nextLine();
 		}
-
 		System.out.println("Exiting program.");
 	}
-
-
 }

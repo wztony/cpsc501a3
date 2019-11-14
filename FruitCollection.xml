@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<serialized>
+  <object class="[Ljava.lang.Object;" id="2" length="0" />
+  <object class="[Ljava.lang.Object;" id="3" length="0" />
+  <object class="Fruit" id="5">
+    <field name="weight" declaringclass="Fruit">
+      <value>123.4</value>
+    </field>
+    <field name="seed" declaringclass="Fruit">
+      <value>true</value>
+    </field>
+  </object>
+  <object class="Fruit" id="6">
+    <field name="weight" declaringclass="Fruit">
+      <value>1.2</value>
+    </field>
+    <field name="seed" declaringclass="Fruit">
+      <value>false</value>
+    </field>
+  </object>
+  <object class="[Ljava.lang.Object;" id="4" length="2">
+    <reference>5</reference>
+    <reference>6</reference>
+  </object>
+  <object class="java.util.ArrayList" id="1">
+    <field name="serialVersionUID" declaringclass="java.util.ArrayList">
+      <value>8683452581122892189</value>
+    </field>
+    <field name="DEFAULT_CAPACITY" declaringclass="java.util.ArrayList">
+      <value>10</value>
+    </field>
+    <field name="EMPTY_ELEMENTDATA" declaringclass="java.util.ArrayList">
+      <reference>2</reference>
+    </field>
+    <field name="DEFAULTCAPACITY_EMPTY_ELEMENTDATA" declaringclass="java.util.ArrayList">
+      <reference>3</reference>
+    </field>
+    <field name="elementData" declaringclass="java.util.ArrayList">
+      <reference>4</reference>
+    </field>
+    <field name="size" declaringclass="java.util.ArrayList">
+      <value>2</value>
+    </field>
+    <field name="MAX_ARRAY_SIZE" declaringclass="java.util.ArrayList">
+      <value>2147483639</value>
+    </field>
+  </object>
+  <object class="FruitCollection" id="0">
+    <field name="arrayList" declaringclass="FruitCollection">
+      <reference>1</reference>
+    </field>
+  </object>
+</serialized>
