@@ -2,7 +2,7 @@
 <serialized>
   <object class="LinkedObject" id="1">
     <field name="value" declaringclass="LinkedObject">
-      <value>34</value>
+      <value>4353</value>
     </field>
     <field name="linkedObject" declaringclass="LinkedObject">
       <reference>0</reference>
@@ -10,7 +10,7 @@
   </object>
   <object class="LinkedObject" id="0">
     <field name="value" declaringclass="LinkedObject">
-      <value>12</value>
+      <value>123</value>
     </field>
     <field name="linkedObject" declaringclass="LinkedObject">
       <reference>1</reference>

@@ -2,7 +2,7 @@
 <serialized>
   <object class="Fruit" id="0">
     <field name="weight" declaringclass="Fruit">
-      <value>123.1</value>
+      <value>123.0</value>
     </field>
     <field name="seed" declaringclass="Fruit">
       <value>true</value>

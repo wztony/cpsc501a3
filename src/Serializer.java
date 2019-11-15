@@ -1,9 +1,14 @@
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.IdentityHashMap;
 import java.util.Scanner;
@@ -22,13 +27,9 @@ public class Serializer {
 	private IdentityHashMap<Object, Integer> ihm;
 	private Element rootElement;
 	
-	public Serializer(String fileName) {
-		this.fileName = fileName;
+	public Serializer(String filePrefix) {
+		this.fileName = filePrefix + ".xml";
 		ihm = new IdentityHashMap<Object, Integer>();
-	}
-	
-	public void setFileName(String fileName) {
-		this.fileName = fileName;
 	}
 	
 	public void setIHM(IdentityHashMap<Object, Integer> ihm) {
@@ -274,15 +275,47 @@ public class Serializer {
 		System.out.println("3 for object with an array of primitives");
 		System.out.println("4 for object with an array of simple objects");
 		System.out.println("5 for object with collection");
-		System.out.println("q to exit");
+		System.out.println("q to exit client");
+	}
+	
+	public void sendFile(Object docObject) {
+		String serverAddress = "10.0.0.161";
+		int serverPort = 4444;
+		try {
+			Socket socket = new Socket(serverAddress, serverPort);
+			ObjectOutputStream outputStream = new ObjectOutputStream(socket.getOutputStream());
+			
+			outputStream.writeObject(docObject);
+			outputStream.flush();
+			socket.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void sendNull() {
+		String serverAddress = "10.0.0.161";
+		int serverPort = 4444;
+		try {
+			Socket socket = new Socket(serverAddress, serverPort);
+			ObjectOutputStream outputStream = new ObjectOutputStream(socket.getOutputStream());
+			
+			outputStream.writeObject(null);
+			outputStream.flush();
+			socket.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public static void main(String[] args) {
-		Serializer serializer = new Serializer("Fruit.xml");
+		String filePrefix = "Fruit";
+		Serializer serializer = new Serializer(filePrefix);
 		Scanner scanner = new Scanner(System.in);
 		serializer.displaySelections();
 		String s = scanner.nextLine();
-		while(!s.equals("q")) {
+		Object docObject = new Object();
+		while(!(s.equals("q") || s.equals("close"))) {
 			switch(s) {
 			case "1":
 				System.out.println("Enter its weight (double)");
@@ -293,8 +326,10 @@ public class Serializer {
 				boolean seed = Boolean.parseBoolean(s);
 				Object fruit = serializer.createFruit(weight, seed);
 //				System.out.println("Class name: " + fruit.getClass().getName());
-				serializer.setFileName("Fruit.xml");
-				serializer.serialize(fruit);
+				filePrefix = "Fruit";
+				serializer = new Serializer(filePrefix);
+				docObject = serializer.serialize(fruit);
+				serializer.sendFile(docObject);
 				break;
 			case "2":
 				System.out.println("Enter its value (int)");
@@ -319,8 +354,10 @@ public class Serializer {
 				} catch (NoSuchMethodException | SecurityException | ClassNotFoundException e) {
 					e.printStackTrace();
 				}
-				serializer.setFileName("LinkedObject.xml");
-				serializer.serialize(linkedObject1);
+				filePrefix = "LinkedObject";
+				serializer = new Serializer(filePrefix);
+				docObject = serializer.serialize(linkedObject1);
+				serializer.sendFile(docObject);
 				break;
 			case "3":
 				System.out.println("Enter the length of the int array");
@@ -335,8 +372,10 @@ public class Serializer {
 				}
 				Object basicContainer = serializer.createBasicContainer(array1);
 //				System.out.println("Class name: " + basicContainer.getClass().getName());
-				serializer.setFileName("BasicContainer.xml");
-				serializer.serialize(basicContainer);
+				filePrefix = "BasicContainer";
+				serializer = new Serializer(filePrefix);
+				docObject = serializer.serialize(basicContainer);
+				serializer.sendFile(docObject);
 				break;
 			case "4":
 				System.out.println("Enter the length of the object array");
@@ -354,8 +393,10 @@ public class Serializer {
 				}
 				Object fruitContainer = serializer.createFruitContainer(array2);
 //				System.out.println("Class name: " + fruitContainer.getClass().getName());
-				serializer.setFileName("FruitContainer.xml");
-				serializer.serialize(fruitContainer);
+				filePrefix = "FruitContainer";
+				serializer = new Serializer(filePrefix);
+				docObject = serializer.serialize(fruitContainer);
+				serializer.sendFile(docObject);
 				break;
 			case "5":
 				System.out.println("Enter the length of the array list");
@@ -373,8 +414,10 @@ public class Serializer {
 				}
 				Object arrayList = serializer.createFruitCollection(array3);
 //				System.out.println("Class name: " + arrayList.getClass().getName());
-				serializer.setFileName("FruitCollection.xml");
-				serializer.serialize(arrayList);
+				filePrefix = "FruitCollection";
+				serializer = new Serializer(filePrefix);
+				docObject = serializer.serialize(arrayList);
+				serializer.sendFile(docObject);
 				break;
 			default:
 				System.out.println("Invalid selection, try again");
@@ -382,6 +425,10 @@ public class Serializer {
 			}
 			serializer.displaySelections();
 			s = scanner.nextLine();
+		}
+		if(s.equals("close")) {
+			serializer.sendNull();
+			System.out.println("Closing server.");
 		}
 		System.out.println("Exiting program.");
 	}

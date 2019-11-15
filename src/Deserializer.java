@@ -1,9 +1,12 @@
 import java.io.File;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.IdentityHashMap;
 import java.util.List;
@@ -56,7 +59,7 @@ public class Deserializer {
 	}
 	
 	public void ihmPut(Object object, int value) {
-		System.out.println("ihm storing object id " + value);
+//		System.out.println("ihm storing object id " + value);
 		ihm.put(value, object);
 	}
 	
@@ -80,14 +83,14 @@ public class Deserializer {
 	public Object recDeserialize(Element rootElement, Element childElement) {
 		int id = Integer.valueOf(childElement.getAttributeValue("id"));
 		if(ihm.containsKey(id)) {
-			System.out.println("child reference exists, no recursion");
+//			System.out.println("child reference exists, no recursion");
 			return ihmGetObject(id);
 		}
 		Object object = null;
 		if(childElement.getAttributeValue("class").contains("[")) {
-			System.out.println("Object is an array");
+//			System.out.println("Object is an array");
 			int length = Integer.valueOf(childElement.getAttributeValue("length"));
-			System.out.println("the array length is " + length);
+//			System.out.println("the array length is " + length);
 			if(childElement.getAttributeValue("class").contains("[I")) {
 				int[] intArray = (int[]) Array.newInstance(int.class, length);
 				List values = childElement.getChildren();
@@ -98,7 +101,7 @@ public class Deserializer {
 					i++;
 				}
 				for(int j=0; j<intArray.length; j++) {
-					System.out.println("int array element " + Array.get(intArray, j));
+//					System.out.println("int array element " + Array.get(intArray, j));
 				}
 				object = (Object) intArray;
 				ihmPut(object, id);
@@ -110,14 +113,14 @@ public class Deserializer {
 				for(Object value : values) {
 					Element fruitReference = (Element) value;
 					int fruitID = Integer.valueOf(fruitReference.getText());
-					System.out.println("fruit reference is " + fruitID);
+//					System.out.println("fruit reference is " + fruitID);
 					
 					List children = rootElement.getChildren();
 					for(Object child : children) {
 						Element childElems = (Element) child;
-						System.out.println("reference child name " + childElems.getName());
+//						System.out.println("reference child name " + childElems.getName());
 						int childID = Integer.valueOf(childElems.getAttributeValue("id"));
-						System.out.println("child id " + childID);
+//						System.out.printlfn("child id " + childID);
 						if(childID == fruitID) {
 							Array.set(fruitArray, refCounter, recDeserialize(rootElement, childElems));
 							
@@ -126,31 +129,31 @@ public class Deserializer {
 					refCounter++;
 				}
 				for(int j=0; j<fruitArray.length; j++) {
-					System.out.println("fruit array element " + Array.get(fruitArray, j));
+//					System.out.println("fruit array element " + Array.get(fruitArray, j));
 				}
 				object = (Object) fruitArray;
 				ihmPut(object, id);
 			}
 			else {
-				System.out.println("some other array");
+//				System.out.println("some other array");
 				Object[] objectArray = (Object[]) Array.newInstance(Object.class, length);
-				System.out.println("some other array length " + Array.getLength(objectArray));
+//				System.out.println("some other array length " + Array.getLength(objectArray));
 				List values = childElement.getChildren();
 				int refCounter = 0;
 				for(Object value : values) {
-					System.out.println("refCounter " + refCounter);
+//					System.out.println("refCounter " + refCounter);
 					Element fruitReference = (Element) value;
 					int fruitID = Integer.valueOf(fruitReference.getText());
-					System.out.println("fruit reference is " + fruitID);
+//					System.out.println("fruit reference is " + fruitID);
 					
 					List children = rootElement.getChildren();
 					for(Object child : children) {
 						Element childElems = (Element) child;
-						System.out.println("reference child name " + childElems.getName());
+//						System.out.printkln("reference child name " + childElems.getName());
 						int childID = Integer.valueOf(childElems.getAttributeValue("id"));
-						System.out.println("child id " + childID);
+//						System.out.println("child id " + childID);
 						if(childID == fruitID) {
-							System.out.println("child match");
+//							System.out.println("child match");
 							Array.set(objectArray, refCounter, (Object) recDeserialize(rootElement, childElems));
 							
 						}
@@ -158,7 +161,7 @@ public class Deserializer {
 					refCounter++;
 				}
 				for(int j=0; j<objectArray.length; j++) {
-					System.out.println("fruit array element " + Array.get(objectArray, j));
+//					System.out.println("fruit array element " + Array.get(objectArray, j));
 				}
 				object = (Object) objectArray;
 				ihmPut(object, id);
@@ -166,6 +169,7 @@ public class Deserializer {
 		}
 		else {
 			String className = childElement.getAttribute("class").getValue();
+//			System.out.println("class name: " + className);
 			Class objectClass;
 			try {
 				objectClass = Class.forName(className);
@@ -180,25 +184,25 @@ public class Deserializer {
 							for(Object objectVF : vfs) {
 								Element vf = (Element) objectVF;
 								if(vf.getName().equals("value")) {
-									System.out.println("field is value");
+//									System.out.println("field is value");
 									try {
-										System.out.println("field name: " + elementField.getAttribute("name").getValue());
+//										System.out.println("field name: " + elementField.getAttribute("name").getValue());
 										Field field = objectClass.getDeclaredField(elementField.getAttribute("name").getValue());
 										field.setAccessible(true);
-										System.out.println("field type: " + field.getType());
+//										System.out.println("field type: " + field.getType());
 										if(field.getType() == int.class) {
-											System.out.println("field value: " + Integer.valueOf(vf.getValue()));
-											Field modifiersField = Field.class.getDeclaredField("modifiers");
+//											System.out.println("field value: " + Integer.valueOf(vf.getValue()));
+											Field modifiersField = Field.class.getDeclaredField("modifiers");								//https://stackoverflow.com/questions/3301635/change-private-static-final-field-using-java-reflection
 											modifiersField.setAccessible(true);
 											modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
 											field.set(object, Integer.valueOf(vf.getValue()));
 										}
 										else if(field.getType() == double.class) {
-											System.out.println("field value: " + Double.valueOf(vf.getValue()));
+//											System.out.println("field value: " + Double.valueOf(vf.getValue()));
 											field.set(object, Double.valueOf(vf.getValue()));
 										}
 										else if(field.getType() == boolean.class) {
-											System.out.println("field value: " + Boolean.valueOf(vf.getValue()));
+//											System.out.println("field value: " + Boolean.valueOf(vf.getValue()));
 											field.set(object, Boolean.valueOf(vf.getValue()));
 										}
 										
@@ -208,9 +212,9 @@ public class Deserializer {
 								}
 								else if(vf.getName().equals("reference")) {
 									int referenceNumber = Integer.valueOf(vf.getText());
-									System.out.println("field is object reference " + referenceNumber);
+//									System.out.println("field is object reference " + referenceNumber);
 									if(ihmContainsKey(referenceNumber)) {
-										System.out.println("reference object exists");
+//										System.out.println("reference object exists");
 										Field field;
 										try {
 											field = objectClass.getDeclaredField(elementField.getAttribute("name").getValue());
@@ -225,7 +229,7 @@ public class Deserializer {
 										
 									}
 									else {
-										System.out.println("reference object doesn't exist");
+//										System.out.println("reference object doesn't exist");
 										List children = rootElement.getChildren();
 										for(Object child : children) {
 											Element childElems = (Element) child;
@@ -270,27 +274,57 @@ public class Deserializer {
 		
 		for(Object child : children) {
 			Element childElement = (Element) child;
-			System.out.println("object id is: " + childElement.getAttributeValue("id"));
+//			System.out.println("object id is: " + childElement.getAttributeValue("id"));
 			Object fieldObject = recDeserialize(rootElement, childElement);
-			System.out.println("Done deserializing");
+//			System.out.println("Done deserializing");
 		}
 		return ihm.get(0);
 	}
 	
+	
 	public static void main(String[] args) {
-		Deserializer deserializer = new Deserializer();
+		Object object = null;
+		int port = 4444;
+		try {
+			ServerSocket serverSocket = new ServerSocket(port);
+			Socket socket;
+			while(true) {
+				socket = serverSocket.accept();
+				ObjectInputStream inputStream = new ObjectInputStream(socket.getInputStream());
+
+				Deserializer deserializer = new Deserializer();
+				try {
+					object = inputStream.readObject();
+					if(object == null) {
+						socket.close();
+						System.out.println("Received server close, halting main");
+						return;
+					}
+					Inspector inspector = new Inspector();
+					inspector.inspect(deserializer.deserialize((Document) object), true);
+				} catch (ClassNotFoundException e) {
+					e.printStackTrace();
+				}
+				socket.close();
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		/*
 		deserializer.setPrefix(5);
 		SAXBuilder builder = new SAXBuilder();
 		try {
 			Document document = builder.build(new File(deserializer.getFilePrefix() + ".xml"));
 			Object obj = deserializer.deserialize(document);
-
+			new Inspector().inspect(obj, true);
 	//		Serializer serializer = new Serializer("Reserialized.xml");
-			Serializer serializer = new Serializer("Reserialized" + deserializer.getFilePrefix() + ".xml");
-			serializer.serialize(obj);
+//			Serializer serializer = new Serializer("Reserialized" + deserializer.getFilePrefix() + ".xml");
+//			serializer.serialize(obj);
 		} catch (JDOMException | IOException e) {
 			e.printStackTrace();
 		}
+		*/
 		
 	}
 

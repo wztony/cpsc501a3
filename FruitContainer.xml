@@ -2,7 +2,7 @@
 <serialized>
   <object class="Fruit" id="2">
     <field name="weight" declaringclass="Fruit">
-      <value>123.2</value>
+      <value>12.4</value>
     </field>
     <field name="seed" declaringclass="Fruit">
       <value>true</value>
@@ -10,24 +10,15 @@
   </object>
   <object class="Fruit" id="3">
     <field name="weight" declaringclass="Fruit">
-      <value>0.0</value>
+      <value>123.24</value>
     </field>
     <field name="seed" declaringclass="Fruit">
       <value>false</value>
     </field>
   </object>
-  <object class="Fruit" id="4">
-    <field name="weight" declaringclass="Fruit">
-      <value>134.0</value>
-    </field>
-    <field name="seed" declaringclass="Fruit">
-      <value>true</value>
-    </field>
-  </object>
-  <object class="[LFruit;" id="1" length="3">
+  <object class="[LFruit;" id="1" length="2">
     <reference>2</reference>
     <reference>3</reference>
-    <reference>4</reference>
   </object>
   <object class="FruitContainer" id="0">
     <field name="fruits" declaringclass="FruitContainer">

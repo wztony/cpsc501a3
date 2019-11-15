@@ -4,7 +4,7 @@
   <object class="[Ljava.lang.Object;" id="3" length="0" />
   <object class="Fruit" id="5">
     <field name="weight" declaringclass="Fruit">
-      <value>123.4</value>
+      <value>123.423</value>
     </field>
     <field name="seed" declaringclass="Fruit">
       <value>true</value>
@@ -12,7 +12,7 @@
   </object>
   <object class="Fruit" id="6">
     <field name="weight" declaringclass="Fruit">
-      <value>1.2</value>
+      <value>41.0</value>
     </field>
     <field name="seed" declaringclass="Fruit">
       <value>false</value>
