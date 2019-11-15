@@ -329,7 +329,6 @@ public class Serializer {
 				s = scanner.nextLine();
 				boolean seed = Boolean.parseBoolean(s);
 				Object fruit = serializer.createFruit(weight, seed);
-//				System.out.println("Class name: " + fruit.getClass().getName());
 				filePrefix = "Fruit";
 				serializer = new Serializer(filePrefix);
 				docObject = serializer.serialize(fruit);
@@ -344,8 +343,6 @@ public class Serializer {
 				s = scanner.nextLine();
 				int value2 = Integer.parseInt(s);
 				Object linkedObject2 = serializer.createLinkedObject(value2);
-//				System.out.println("Class name: " + linkedObject1.getClass().getName());
-//				System.out.println("Class name: " + linkedObject2.getClass().getName());
 				try {
 					Method setLinkedObject = Class.forName("LinkedObject").getDeclaredMethod("setLinkedObject", LinkedObject.class);
 					setLinkedObject.setAccessible(true);
@@ -375,7 +372,6 @@ public class Serializer {
 					array1[i] = value;
 				}
 				Object basicContainer = serializer.createBasicContainer(array1);
-//				System.out.println("Class name: " + basicContainer.getClass().getName());
 				filePrefix = "BasicContainer";
 				serializer = new Serializer(filePrefix);
 				docObject = serializer.serialize(basicContainer);
@@ -396,7 +392,6 @@ public class Serializer {
 					array2[i] = (Fruit) serializer.createFruit(weight2, seed2);
 				}
 				Object fruitContainer = serializer.createFruitContainer(array2);
-//				System.out.println("Class name: " + fruitContainer.getClass().getName());
 				filePrefix = "FruitContainer";
 				serializer = new Serializer(filePrefix);
 				docObject = serializer.serialize(fruitContainer);
@@ -417,7 +412,6 @@ public class Serializer {
 					array3.add((Fruit) serializer.createFruit(weight3, seed3));
 				}
 				Object arrayList = serializer.createFruitCollection(array3);
-//				System.out.println("Class name: " + arrayList.getClass().getName());
 				filePrefix = "FruitCollection";
 				serializer = new Serializer(filePrefix);
 				docObject = serializer.serialize(arrayList);

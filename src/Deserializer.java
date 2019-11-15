@@ -67,19 +67,6 @@ public class Deserializer {
 		return ihm.get(value);
 	}
 	
-	
-	/*public Object alGetObject(int value) {
-		Iterator iterator = al.iterator();
-		while(iterator.hasNext()) {
-			Object o = iterator.next();
-			if(ihm.get(o) == value) {
-				System.out.println("object exists, getting ihm # " + ihm.get(o));
-				return o;
-			}
-		}
-		return null;
-	}*/
-	
 	public Object recDeserialize(Element rootElement, Element childElement) {
 		int id = Integer.valueOf(childElement.getAttributeValue("id"));
 		if(ihm.containsKey(id)) {
@@ -99,9 +86,6 @@ public class Deserializer {
 					Element intValue = (Element) value;
 					Array.setInt(intArray, i, Integer.valueOf(intValue.getValue()));
 					i++;
-				}
-				for(int j=0; j<intArray.length; j++) {
-//					System.out.println("int array element " + Array.get(intArray, j));
 				}
 				object = (Object) intArray;
 				ihmPut(object, id);
@@ -123,13 +107,9 @@ public class Deserializer {
 //						System.out.printlfn("child id " + childID);
 						if(childID == fruitID) {
 							Array.set(fruitArray, refCounter, recDeserialize(rootElement, childElems));
-							
 						}
 					}
 					refCounter++;
-				}
-				for(int j=0; j<fruitArray.length; j++) {
-//					System.out.println("fruit array element " + Array.get(fruitArray, j));
 				}
 				object = (Object) fruitArray;
 				ihmPut(object, id);
@@ -155,13 +135,9 @@ public class Deserializer {
 						if(childID == fruitID) {
 //							System.out.println("child match");
 							Array.set(objectArray, refCounter, (Object) recDeserialize(rootElement, childElems));
-							
 						}
 					}
 					refCounter++;
-				}
-				for(int j=0; j<objectArray.length; j++) {
-//					System.out.println("fruit array element " + Array.get(objectArray, j));
 				}
 				object = (Object) objectArray;
 				ihmPut(object, id);
@@ -253,8 +229,6 @@ public class Deserializer {
 					}
 
 					ihmPut(object, id);
-					
-					
 				} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
 						| InvocationTargetException | NoSuchMethodException | SecurityException e) {
 					e.printStackTrace();
@@ -310,22 +284,6 @@ public class Deserializer {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
-		/*
-		deserializer.setPrefix(5);
-		SAXBuilder builder = new SAXBuilder();
-		try {
-			Document document = builder.build(new File(deserializer.getFilePrefix() + ".xml"));
-			Object obj = deserializer.deserialize(document);
-			new Inspector().inspect(obj, true);
-	//		Serializer serializer = new Serializer("Reserialized.xml");
-//			Serializer serializer = new Serializer("Reserialized" + deserializer.getFilePrefix() + ".xml");
-//			serializer.serialize(obj);
-		} catch (JDOMException | IOException e) {
-			e.printStackTrace();
-		}
-		*/
-		
 	}
 
 }
