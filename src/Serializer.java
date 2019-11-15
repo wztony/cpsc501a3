@@ -32,6 +32,10 @@ public class Serializer {
 		ihm = new IdentityHashMap<Object, Integer>();
 	}
 	
+	public String getFileName() {
+		return fileName;
+	}
+	
 	public void setIHM(IdentityHashMap<Object, Integer> ihm) {
 		this.ihm = ihm;
 	}
